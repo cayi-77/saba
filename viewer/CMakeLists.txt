@@ -130,26 +130,9 @@ target_include_directories(SabaViewer
 
 set (SabaViewer_LIBRARIES Saba fcpp ${OPENGL_LIBRARY} lua)
 
-# Link GLFW library
-if (SABA_FORCE_GLFW_BUILD)
-    list (APPEND SabaViewer_LIBRARIES glfw)
-else ()
-    list (APPEND SabaViewer_LIBRARIES ${GLFW_LIBRARIES})
-endif ()
+find_package(glfw3 CONFIG REQUIRED)
+target_link_libraries(SabaViewer PUBLIC glfw)
+find_package(glslang CONFIG REQUIRED)
+target_link_libraries(SabaViewer PUBLIC glslang::glslang glslang::glslang-default-resource-limits glslang::SPIRV glslang::SPVRemapper)
 
-# Use glslang library
-if (SABA_USE_GLSLANG)
-    include_directories(${PROJECT_SOURCE_DIR}/external/glslang)
-    target_compile_definitions(SabaViewer
-        PRIVATE USE_GLSLANG=1
-    )
-    list (APPEND SabaViewer_LIBRARIES
-        PRIVATE glslang
-        PRIVATE OSDependent
-        PRIVATE SPIRV
-        PRIVATE OGLCompiler
-        PRIVATE HLSL
-    )
-endif()
-
-target_link_libraries(SabaViewer ${SabaViewer_LIBRARIES})
+target_link_libraries(SabaViewer PUBLIC ${SabaViewer_LIBRARIES})
